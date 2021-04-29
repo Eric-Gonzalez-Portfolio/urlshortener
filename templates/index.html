@@ -1,0 +1,119 @@
+{% load static %}
+
+<head>
+    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+    <title>Shorten That URL!</title>
+    <link rel="icon" href="{% static 'images/favicon_ico.ico' %}">
+    <style>
+        *,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+body {
+  min-height: 100vh;
+  font-family: "Lato", sans-serif;
+  line-height: 1.5;
+  color: #111;
+  background: url("/static/images/rain_background.jpg") 50% 0 no-repeat fixed !important;
+}
+
+main {
+  max-width: 720px;
+  width: 100%;
+  border: 2.5px solid #3029bd;
+  border-radius: 2.5px;
+  box-shadow: 0 10px 20px rgba(17, 17, 17, 0.125),
+    0 5px 5px rgba(17, 17, 17, 0.25);
+  background-image: linear-gradient(to top, #03c4d6 0%, #3029bd 100%);
+}
+
+h1 {
+  padding: 1rem;
+  color: white;
+  text-align: center;
+}
+
+#directions {
+  color: white;
+  text-align: center;
+}
+
+input,
+button {
+  font-family: inherit;
+  line-height: inherit;
+  color: inherit;
+  border: 0;
+  padding: 1rem;
+}
+
+input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+}
+
+button {
+  cursor: pointer;
+  flex: 1;
+  background-color: transparent;
+  color: white;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+section {
+  min-height: 120px;
+  text-align: center;
+  background-color: white;
+}
+
+    </style>
+</head>
+<main>
+  <h1>Public Use URL Shortener</h1>
+    <p id=directions>Please enter a URL as input.</p>
+  <form id="post-form">
+    {% csrf_token %}
+  <input type="text" name="urllink" id="urllink" placeholder="Enter URL here">
+  <div class="buttons">
+    <button type="submit" id="shorten">Shorten</button>
+  </div>
+  </form>
+  
+  <section id="section"><h2></h2></section>
+    
+</main>
+
+<script type="text/javascript">
+  $(document).on('submit','#post-form',function(e){
+    e.preventDefault();
+
+    $.ajax({
+      type:'POST',
+      url:'/create',
+      data:{
+        urllink:$('#urllink').val(),
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+      },
+      success: function(data){
+        //Change from localhost to domain name when deployed (NameCheap has good options)
+        $('h2').html("eg-urlshortener.herokuapp.com/"+data)
+      }
+    });
+  });
+</script>
